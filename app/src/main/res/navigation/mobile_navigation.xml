@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.humber.its2020.ibourit.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_justbourit"
+        android:name="com.humber.its2020.ibourit.ui.justgotit.JustGotItFragment"
+        android:label="@string/justgotit"
+        tools:layout="@layout/fragment_justgotit" />
+
+    <fragment
+        android:id="@+id/navigation_inventory"
+        android:name="com.humber.its2020.ibourit.ui.inventory.InventoryFragment"
+        android:label="@string/inventory"
+        tools:layout="@layout/fragment_inventory" />
+
+    <fragment
+        android:id="@+id/navigation_account"
+        android:name="com.humber.its2020.ibourit.ui.account.AccountFragment"
+        android:label="@string/my_account"
+        tools:layout="@layout/fragment_account" />
+</navigation>
