@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "721971863953",
+    "firebase_url": "https://ibourit-1602181990457.firebaseio.com",
+    "project_id": "ibourit-1602181990457",
+    "storage_bucket": "ibourit-1602181990457.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721971863953:android:1278faa8463b24378f3a30",
+        "android_client_info": {
+          "package_name": "com.humber.its2020.ibourit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "721971863953-oqifmjku6blkopdrgr6rlmika3nol3do.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.humber.its2020.ibourit",
+            "certificate_hash": "67f0bb3069f425efdfeab8c805c1e5f7151d7970"
+          }
+        },
+        {
+          "client_id": "721971863953-2gk5f344htgvph3jiatps0ij91moeqga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgJwQ3AX4cCblZTHoRiRp-HYaqZNL_kGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "721971863953-2gk5f344htgvph3jiatps0ij91moeqga.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

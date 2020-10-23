@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
@@ -7,7 +8,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId 'com.humber.its2020f.ibourit'
+        applicationId 'com.humber.its2020.ibourit'
         minSdkVersion 29
         targetSdkVersion 30
         versionCode 1
@@ -37,6 +38,16 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
+
+    implementation 'com.google.firebase:firebase-core:17.5.1'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    // Declare the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
