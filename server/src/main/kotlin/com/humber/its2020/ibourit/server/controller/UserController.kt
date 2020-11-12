@@ -16,4 +16,9 @@ class UserController (val repo: UserRepository) {
     fun getUser(@PathVariable id: Long): Optional<User> {
         return repo.findById(id)
     }
+
+    @GetMapping("/user")
+    fun getAllUser(): List<User> {
+        return repo.findAll().toList();
+    }
 }
