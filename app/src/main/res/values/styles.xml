@@ -19,4 +19,8 @@
     <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
         <item name="android:textSize">10sp</item>
     </style>
+
+    <style name="SmallFont" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
 </resources>

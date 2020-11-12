@@ -6,4 +6,9 @@
     <string name="justgotit">JustGotIt</string>
     <string name="inventory">Inventory</string>
     <string name="account">Account</string>
+    <string name="top_logo_image">Top logo image</string>
+    <string name="more_button">More button</string>
+    <string name="google_maps_key">AIzaSyDdmbRi43RUtaRK5pRAkjWwG9_LfYYfYcA</string>
+    <string name="search_here">Search here</string>
+    <string name="thumbs_up">Thumbs up</string>
 </resources>

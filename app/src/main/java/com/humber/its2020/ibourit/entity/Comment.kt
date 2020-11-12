@@ -1,7 +1,7 @@
 package com.humber.its2020.ibourit.entity
 
 data class Comment (
-    val id: Int = 0,
-    val userId: Int,
+    val id: Long = 0,
+    val userId: Long,
     val content: String
 )
