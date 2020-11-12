@@ -32,7 +32,7 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val h = holder as ViewHolder
-        h.topLogo.setImageResource(R.drawable.ic_user)
+        h.topLogo.setImageResource(R.drawable.ic_user_default)
 
         val article = articles[position]
         h.topUser.text = "test user $position"

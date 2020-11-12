@@ -12,6 +12,11 @@
         android:title="@string/justgotit" />
 
     <item
+        android:id="@+id/navigation_new_article"
+        android:icon="@drawable/ic_new_article"
+        android:title="@string/post" />
+
+    <item
         android:id="@+id/navigation_inventory"
         android:icon="@drawable/ic_inventory_24"
         android:title="@string/inventory" />

@@ -18,6 +18,11 @@
         tools:layout="@layout/fragment_justgotit" />
 
     <fragment
+        android:id="@+id/navigation_new_article"
+        android:name="com.humber.its2020.ibourit.ui.new_article.NewArticleFragment"
+        tools:layout="@layout/fragment_new_article" />
+
+    <fragment
         android:id="@+id/navigation_inventory"
         android:name="com.humber.its2020.ibourit.ui.inventory.InventoryFragment"
         android:label="@string/inventory"
