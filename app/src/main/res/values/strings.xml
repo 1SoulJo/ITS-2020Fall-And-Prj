@@ -5,5 +5,5 @@
     <string name="title_notifications">Notifications</string>
     <string name="justgotit">JustGotIt</string>
     <string name="inventory">Inventory</string>
-    <string name="my_account">My Account</string>
+    <string name="account">Account</string>
 </resources>

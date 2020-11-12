@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class AccountViewModel : ViewModel() {
+    val userId : String = TODO()
+
     private val _text = MutableLiveData<String>().apply {
         value = "This is Account Fragment"
     }

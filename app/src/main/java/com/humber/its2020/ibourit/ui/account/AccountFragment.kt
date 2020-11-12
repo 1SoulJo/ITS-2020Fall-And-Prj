@@ -6,9 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -30,7 +29,7 @@ class AccountFragment : Fragment(), View.OnClickListener {
     }
 
     private lateinit var accountViewModel: AccountViewModel
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
@@ -38,13 +37,7 @@ class AccountFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        accountViewModel =
-            ViewModelProvider(this).get(AccountViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_account, container, false)
-        val textView: TextView = root.findViewById(R.id.text_account)
-        accountViewModel.text.observe(viewLifecycleOwner, {
-            textView.text = it
-        })
 
         root.findViewById<SignInButton>(R.id.sign_in_button)?.setOnClickListener(this)
 
@@ -56,7 +49,7 @@ class AccountFragment : Fragment(), View.OnClickListener {
             .build()
 
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(activity as MainActivity, gso);
+        googleSignInClient = GoogleSignIn.getClient(activity as MainActivity, gso)
 
         // Initialize Firebase Auth
         auth = Firebase.auth
@@ -66,6 +59,9 @@ class AccountFragment : Fragment(), View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
+
+        (activity as AppCompatActivity).supportActionBar?.title =
+            " " + resources.getString(R.string.account)
 
         val account = GoogleSignIn.getLastSignedInAccount(activity as MainActivity)
         Log.d("Account", account.toString())
@@ -78,7 +74,9 @@ class AccountFragment : Fragment(), View.OnClickListener {
     }
 
     private fun signIn() {
-        startActivityForResult(mGoogleSignInClient.signInIntent, RC_SIGN_IN)
+        startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
+//        auth.signOut()
+//        googleSignInClient.signOut()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -90,7 +88,7 @@ class AccountFragment : Fragment(), View.OnClickListener {
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                Log.w("Account", "signInResult:failed code=" + e.statusCode)
+                Log.d(TAG, "signInResult:failed code=" + e.statusCode)
             }
         }
     }
