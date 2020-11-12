@@ -20,6 +20,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.humber.its2020.ibourit.MainActivity
 import com.humber.its2020.ibourit.R
+import kotlinx.android.synthetic.main.fragment_account.*
 
 
 class AccountFragment : Fragment(), View.OnClickListener {
@@ -38,8 +39,6 @@ class AccountFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_account, container, false)
-
-        root.findViewById<SignInButton>(R.id.sign_in_button)?.setOnClickListener(this)
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -63,20 +62,39 @@ class AccountFragment : Fragment(), View.OnClickListener {
         (activity as AppCompatActivity).supportActionBar?.title =
             " " + resources.getString(R.string.account)
 
-        val account = GoogleSignIn.getLastSignedInAccount(activity as MainActivity)
-        Log.d("Account", account.toString())
+        btn_sign_in.setOnClickListener(this)
+        btn_sign_out.setOnClickListener(this)
+
+        updateAccountName()
     }
 
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.sign_in_button -> signIn()
+            R.id.btn_sign_in -> signIn()
+            R.id.btn_sign_out -> {
+                auth.signOut()
+                googleSignInClient.signOut().addOnCompleteListener {
+                    Log.d(TAG, "Signed Out");
+                    updateAccountName()
+                }
+            }
+        }
+    }
+
+    private fun updateAccountName() {
+        if (auth.currentUser != null) {
+            text_account.text = auth.currentUser!!.email
+            btn_sign_in.visibility = View.GONE
+            btn_sign_out.visibility = View.VISIBLE
+        } else {
+            text_account.text = "Please Sign-in"
+            btn_sign_in.visibility = View.VISIBLE
+            btn_sign_out.visibility = View.GONE
         }
     }
 
     private fun signIn() {
         startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
-//        auth.signOut()
-//        googleSignInClient.signOut()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -98,8 +116,8 @@ class AccountFragment : Fragment(), View.OnClickListener {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity as MainActivity) { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
+                    updateAccountName()
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Snackbar.make(this.requireView(), "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
