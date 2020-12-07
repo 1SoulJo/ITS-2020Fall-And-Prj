@@ -1,11 +1,15 @@
 package com.humber.its2020.ibourit.server.entity
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import java.util.*
+import javax.persistence.*
 
 @Entity
 class Article (
-        @Id @GeneratedValue var id: Long,
-        var title: String
+        @Id var id: String,
+
+        var content: String,
+
+        var userId: Long,
+
+        var date: Date
 )

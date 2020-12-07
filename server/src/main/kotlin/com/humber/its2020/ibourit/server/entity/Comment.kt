@@ -5,12 +5,8 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
 @Entity
-class User (
+class Comment (
     @Id @GeneratedValue var id: Long,
 
-    var email: String,
-
-    var password: String,
-
-    var username: String
+    var articleId: String
 )

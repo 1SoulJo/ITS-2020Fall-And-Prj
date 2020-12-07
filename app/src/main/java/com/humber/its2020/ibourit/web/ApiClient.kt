@@ -7,7 +7,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiClient {
-    private val BASE_URL = "https://TODO"
+    companion object {
+        private const val BASE_URL = "https://localhost:8080"
+    }
 
     private fun setupApi(): ArticleApi {
         val gson = GsonBuilder()

@@ -40,10 +40,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateActionbar() {
-        (activity as AppCompatActivity).supportActionBar?.title =
-            " " + resources.getString(R.string.app_name)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-        (activity as AppCompatActivity).supportActionBar?.setLogo(R.drawable.ic_bag_09)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayUseLogoEnabled(true)
+        val actionBar = (activity as AppCompatActivity).supportActionBar
+
+        actionBar?.title = " " + resources.getString(R.string.app_name)
+        actionBar?.setLogo(R.drawable.ic_bag_09)
     }
 }
