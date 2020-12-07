@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categories">
+        <item>Shoes</item>
+        <item>Apparel</item>
+        <item>Watch</item>
+        <item>Car</item>
+        <item>Real Estate</item>
+        <item>Appliance</item>
+        <item>Mobile Device</item>
+        <item>Toy</item>
+        <item>Tech Gadget</item>
+    </string-array>
+
+    <integer-array name="category_img">
+        <item>@drawable/inven_shoes</item>
+        <item>@drawable/inven_apparel</item>
+        <item>@drawable/inven_watch</item>
+        <item>@drawable/inven_car</item>
+        <item>@drawable/inven_real_estate</item>
+        <item>@drawable/inven_appliance</item>
+        <item>@drawable/inven_mobile_device</item>
+        <item>@drawable/inven_toy</item>
+        <item>@drawable/inven_tech_gadget</item>
+    </integer-array>
+</resources>

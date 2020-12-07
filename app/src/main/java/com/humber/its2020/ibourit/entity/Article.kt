@@ -1,9 +1,10 @@
 package com.humber.its2020.ibourit.entity
 
-data class Article (
-    val id: Long = 0,
+data class Article(
+    val id: String,
     val userId: Long,
-    val content: String,
+    val itemInfo: ItemInfo?,
+    val description: String,
     val like: Int,
     val comments: List<String>
 )

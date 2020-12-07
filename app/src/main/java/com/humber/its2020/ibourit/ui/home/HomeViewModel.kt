@@ -20,11 +20,11 @@ class HomeViewModel : ViewModel() {
 
     private fun loadArticles() {
         val list = ArrayList<Article>()
-        list.add(Article(0, 0, "hi", 100, listOf("c1", "c2")))
-        list.add(Article(0, 0, "hi", 100, listOf("c1", "c2")))
-        list.add(Article(0, 0, "hi", 100, listOf("c1", "c2")))
-        list.add(Article(0, 0, "hi", 100, listOf("c1", "c2")))
-        list.add(Article(0, 0, "hi", 100, listOf("c1", "c2")))
+        list.add(Article("a1", 0, null, "hi", 100, listOf("c1", "c2")))
+        list.add(Article("a2", 0, null, "hi", 100, listOf("c1", "c2")))
+        list.add(Article("a3", 0, null, "hi", 100, listOf("c1", "c2")))
+        list.add(Article("a4", 0, null, "hi", 100, listOf("c1", "c2")))
+        list.add(Article("a5", 0, null, "hi", 100, listOf("c1", "c2")))
         articles.value = list
     }
 }

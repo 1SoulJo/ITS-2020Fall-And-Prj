@@ -5,6 +5,6 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface ArticleApi {
-    @GET("articles")
+    @GET("article")
     fun getArticles(): Call<List<Article>>
 }

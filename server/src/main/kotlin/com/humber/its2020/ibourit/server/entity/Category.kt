@@ -7,6 +7,5 @@ import javax.persistence.Id
 @Entity
 class Category (
         @Id @GeneratedValue var id: Long,
-
         var name: String
 )

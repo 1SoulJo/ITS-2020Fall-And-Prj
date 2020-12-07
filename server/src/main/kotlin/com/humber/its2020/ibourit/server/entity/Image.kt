@@ -5,9 +5,8 @@ import javax.persistence.*
 @Entity
 class Image (
         @Id @GeneratedValue var id: Long,
-
-        var type: Int,
-
+        var userId: Long,
+        var category: Int,
         var articleId: String,
 
         @Column(name = "picByte", length = 1000)

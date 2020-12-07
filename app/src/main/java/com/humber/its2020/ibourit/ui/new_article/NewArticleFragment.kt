@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -23,14 +24,22 @@ import com.glide.slider.library.slidertypes.DefaultSliderView
 import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place.Field
-import com.google.android.libraries.places.api.model.PlaceLikelihood
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.humber.its2020.ibourit.R
+import com.humber.its2020.ibourit.constants.Category
+import com.humber.its2020.ibourit.entity.User
+import com.humber.its2020.ibourit.web.ApiClient
 import kotlinx.android.synthetic.main.fragment_new_article.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.util.*
 
@@ -57,10 +66,13 @@ class NewArticleFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setHasOptionsMenu(true)
 
+        // title
         (activity as AppCompatActivity).supportActionBar?.title =
             " " + resources.getString(R.string.post_new_article)
 
+        // add image button
         add_image.setOnClickListener {
             verifyStoragePermissions()
             val i = ImagePicker.create(this)
@@ -70,6 +82,7 @@ class NewArticleFragment : Fragment() {
             i.start()
         }
 
+        // location setup
         if (!Places.isInitialized()) {
             Places.initialize(requireContext(), getString(R.string.google_api_key), Locale.CANADA)
         }
@@ -84,7 +97,17 @@ class NewArticleFragment : Fragment() {
             startActivityForResult(intent, REQUEST_CODE_PLACE)
         }
 
-        setHasOptionsMenu(true)
+        // item info setup
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.categories,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            item_category.adapter = adapter
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -107,6 +130,36 @@ class NewArticleFragment : Fragment() {
 
                 sliderView.bundle(Bundle())
                 slider.addSlider(sliderView)
+
+                val file = File(getRealPathFromURI(image.uri)!!)
+                val filePart = MultipartBody.Part.createFormData(
+                    "file",
+                    file.name,
+                    RequestBody.create(MediaType.parse("image/*"), file)
+                )
+
+                ApiClient().uploadImage(filePart, object: Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        Log.d("NewArticle", response.message())
+                    }
+
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Log.d("NewArticle", t.message!!)
+                    }
+                })
+
+//                ApiClient().getUsers(object: Callback<List<User>> {
+//                    override fun onResponse(
+//                        call: Call<List<User>>,
+//                        response: Response<List<User>>
+//                    ) {
+//                        Log.d("NewArticle", response.message())
+//                    }
+//
+//                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
+//                        Log.d("NewArticle", t.message!!)
+//                    }
+//                })
             }
             slider.setPresetTransformer(SliderLayout.Transformer.Default)
 
@@ -135,6 +188,16 @@ class NewArticleFragment : Fragment() {
         }
 
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // post article to server
+        if (item.itemId == R.id.menu_post) {
+            val category = item_category.selectedItem as String
+            Log.d("NewArticle", "${Category.byName(category).ordinal}")
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun getRealPathFromURI(contentUri: Uri): String? {
@@ -172,8 +235,10 @@ class NewArticleFragment : Fragment() {
         val placeFields: List<Field> = listOf(Field.NAME, Field.ADDRESS)
         val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
 
-        if (ContextCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) {
 
             val placeResponse = placesClient.findCurrentPlace(request)
             placeResponse.addOnCompleteListener { task ->

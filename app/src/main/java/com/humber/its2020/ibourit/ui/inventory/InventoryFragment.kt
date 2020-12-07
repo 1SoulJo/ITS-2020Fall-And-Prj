@@ -31,6 +31,7 @@ class InventoryFragment : Fragment() {
             " " + resources.getString(R.string.inventory)
 
         val viewModel: InventoryViewModel by viewModels()
+        viewModel.init(requireContext())
         rv_inventory.layoutManager = LinearLayoutManager(activity)
         rv_inventory.adapter = viewModel.adapter
         val observer = Observer<List<Inventory>> { data ->
