@@ -10,8 +10,8 @@ interface ImageApi {
     @Multipart
     @POST("image")
     fun upload(
-//        @Part("userId") userId: Long,
-//        @Part("category") category: Int,
-//        @Part("articleId") articleId: String,
+        @Part("userId") userId: String,
+        @Part("category") category: Int,
+        @Part("articleId") articleId: String,
         @Part file: MultipartBody.Part): Call<Void>
 }

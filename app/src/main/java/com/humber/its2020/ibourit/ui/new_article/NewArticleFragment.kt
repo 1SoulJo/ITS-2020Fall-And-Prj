@@ -31,7 +31,10 @@ import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.constants.Category
-import com.humber.its2020.ibourit.entity.User
+import com.humber.its2020.ibourit.constants.MapConstants.Companion.REQUEST_CODE_PLACE
+import com.humber.its2020.ibourit.credential.Credential
+import com.humber.its2020.ibourit.entity.Article
+import com.humber.its2020.ibourit.entity.ItemInfo
 import com.humber.its2020.ibourit.web.ApiClient
 import kotlinx.android.synthetic.main.fragment_new_article.*
 import okhttp3.MediaType
@@ -41,6 +44,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -51,7 +55,6 @@ class NewArticleFragment : Fragment() {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-        private const val REQUEST_CODE_PLACE = 1023
     }
 
     lateinit var images : ArrayList<Image>
@@ -73,8 +76,12 @@ class NewArticleFragment : Fragment() {
             " " + resources.getString(R.string.post_new_article)
 
         // add image button
-        add_image.setOnClickListener {
+        image_area.setOnClickListener {
             verifyStoragePermissions()
+            val i = ImagePicker.create(this)
+            i.start()
+        }
+        add_image_sm.setOnClickListener {
             val i = ImagePicker.create(this)
             if (this::images.isInitialized) {
                 i.origin(images)
@@ -84,7 +91,7 @@ class NewArticleFragment : Fragment() {
 
         // location setup
         if (!Places.isInitialized()) {
-            Places.initialize(requireContext(), getString(R.string.google_api_key), Locale.CANADA)
+            Places.initialize(requireContext(), getString(R.string.google_maps_key), Locale.CANADA)
         }
         placesClient = Places.createClient(requireContext())
 
@@ -111,8 +118,11 @@ class NewArticleFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             add_image.visibility = View.GONE
+            add_image_sm.visibility = View.VISIBLE
             slider.visibility = View.VISIBLE
 
             val requestOptions = RequestOptions()
@@ -130,36 +140,6 @@ class NewArticleFragment : Fragment() {
 
                 sliderView.bundle(Bundle())
                 slider.addSlider(sliderView)
-
-                val file = File(getRealPathFromURI(image.uri)!!)
-                val filePart = MultipartBody.Part.createFormData(
-                    "file",
-                    file.name,
-                    RequestBody.create(MediaType.parse("image/*"), file)
-                )
-
-                ApiClient().uploadImage(filePart, object: Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        Log.d("NewArticle", response.message())
-                    }
-
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        Log.d("NewArticle", t.message!!)
-                    }
-                })
-
-//                ApiClient().getUsers(object: Callback<List<User>> {
-//                    override fun onResponse(
-//                        call: Call<List<User>>,
-//                        response: Response<List<User>>
-//                    ) {
-//                        Log.d("NewArticle", response.message())
-//                    }
-//
-//                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
-//                        Log.d("NewArticle", t.message!!)
-//                    }
-//                })
             }
             slider.setPresetTransformer(SliderLayout.Transformer.Default)
 
@@ -186,18 +166,62 @@ class NewArticleFragment : Fragment() {
                 Log.i("address", status.statusMessage!!)
             }
         }
-
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // post article to server
         if (item.itemId == R.id.menu_post) {
-            val category = item_category.selectedItem as String
-            Log.d("NewArticle", "${Category.byName(category).ordinal}")
+            val userId = Credential.id()
+            val pattern = "yyyy-MM-dd'T'HH:mm:ss"
+            val simpleDateFormat = SimpleDateFormat(pattern, Locale.CANADA)
+            val date: String = simpleDateFormat.format(Date())
+            val categoryInt = Category.byName(item_category.selectedItem.toString()).ordinal
+            val article = Article(
+                generateArticleId(userId), userId, Credential.name(),
+                item_description.text.toString(), 0, null, date,
+                categoryInt,
+                act_brand.text.toString(),
+                item_name.text.toString(),
+                Integer.parseInt(item_price.text.toString()), null)
+
+            ApiClient().uploadArticle(article, object : Callback<Article> {
+                override fun onResponse(call: Call<Article>, response: Response<Article>) {
+                    Log.d("NewArticle", "upload success")
+                }
+
+                override fun onFailure(call: Call<Article>, t: Throwable) {
+                    Log.d("NewArticle", "upload fail")
+                }
+            })
+
+            for (image in images) {
+                val file = File(getRealPathFromURI(image.uri)!!)
+                val filePart = MultipartBody.Part.createFormData(
+                    "file",
+                    file.name,
+                    RequestBody.create(MediaType.parse("image/*"), file)
+                )
+
+                ApiClient().uploadImage(userId, categoryInt, article.articleId,
+                    filePart, object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            Log.d("NewArticle", response.message())
+                        }
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            Log.d("NewArticle", t.message!!)
+                        }
+                    })
+            }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun generateArticleId(userId: String) : String {
+        val date = Date()
+        val unique = "$userId$date"
+        return Credential.hashString("SHA-1", unique)
     }
 
     private fun getRealPathFromURI(contentUri: Uri): String? {
@@ -248,8 +272,10 @@ class NewArticleFragment : Fragment() {
                     val city = addresses[2]
                     val country = addresses[0]
 
-                    text_location.visibility = View.VISIBLE
-                    text_location.text = "$city, $country"
+                    if (text_location != null) {
+                        text_location.visibility = View.VISIBLE
+                        text_location.text = "$city, $country"
+                    }
                 } else {
                     val exception = task.exception
                     if (exception is ApiException) {

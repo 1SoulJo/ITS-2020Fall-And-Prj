@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "721971863953-oqifmjku6blkopdrgr6rlmika3nol3do.apps.googleusercontent.com",
+          "client_id": "721971863953-cak4dvbt990at4uq2u4na63vv46k61ti.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.humber.its2020.ibourit",
-            "certificate_hash": "67f0bb3069f425efdfeab8c805c1e5f7151d7970"
+            "certificate_hash": "450137ae3a55d8aa91c33f4f61b2870fe5e509eb"
           }
         },
         {
@@ -29,7 +29,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAgJwQ3AX4cCblZTHoRiRp-HYaqZNL_kGM"
+          "current_key": "AIzaSyBYQCmvQrYsH7_4MrvjyAe4aqAAlDg0X_I"
         }
       ],
       "services": {

@@ -4,11 +4,9 @@ import javax.persistence.*
 
 @Entity
 class Image (
-        @Id @GeneratedValue var id: Long,
-        var userId: Long,
+        @Id @GeneratedValue var id: Long = 0,
+        var userId: String,
         var category: Int,
         var articleId: String,
-
-        @Column(name = "picByte", length = 1000)
-        val picByte: ByteArray
+        val path: String
 )

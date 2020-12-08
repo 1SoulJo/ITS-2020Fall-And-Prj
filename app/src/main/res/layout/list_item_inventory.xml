@@ -6,12 +6,12 @@
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
-    android:minHeight="120dp">
+    android:minHeight="100dp">
 
     <ImageView
         android:id="@+id/inventory_image"
         android:layout_width="wrap_content"
-        android:layout_height="160dp"
+        android:layout_height="120dp"
         android:contentDescription="@string/inventory_image"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +21,7 @@
     <TextView
         android:id="@+id/inventory_name"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="120dp"
         android:gravity="center"
         android:background="#3000"
         android:shadowColor="#000000"
@@ -30,6 +30,7 @@
         android:shadowRadius="1.6"
         android:textColor="@android:color/white"
         android:textSize="40sp"
+        android:fontFamily="@font/tmon_tium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,6 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.humber.its2020.ibourit.entity.Article
+import com.humber.its2020.ibourit.web.ApiClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.text.DateFormat
+import java.util.*
 
 class HomeViewModel : ViewModel() {
     private val articles = MutableLiveData<List<Article>>()
@@ -19,12 +25,14 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun loadArticles() {
-        val list = ArrayList<Article>()
-        list.add(Article("a1", 0, null, "hi", 100, listOf("c1", "c2")))
-        list.add(Article("a2", 0, null, "hi", 100, listOf("c1", "c2")))
-        list.add(Article("a3", 0, null, "hi", 100, listOf("c1", "c2")))
-        list.add(Article("a4", 0, null, "hi", 100, listOf("c1", "c2")))
-        list.add(Article("a5", 0, null, "hi", 100, listOf("c1", "c2")))
-        articles.value = list
+        ApiClient().getArticles(object: Callback<List<Article>> {
+            override fun onResponse(call: Call<List<Article>>, response: Response<List<Article>>) {
+                articles.value = response.body()!!.sortedByDescending { it.date }
+            }
+
+            override fun onFailure(call: Call<List<Article>>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 }

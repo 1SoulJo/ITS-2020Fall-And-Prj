@@ -8,8 +8,7 @@
     <string name="account">Account</string>
     <string name="top_logo_image">Top logo image</string>
     <string name="more_button">More button</string>
-    <!--    <string name="google_maps_key">AIzaSyDdmbRi43RUtaRK5pRAkjWwG9_LfYYfYcA</string>-->
-    <string name="google_maps_key">AIzaSyAgJwQ3AX4cCblZTHoRiRp-HYaqZNL_kGM</string>
+    <string name="google_maps_key">AIzaSyBYQCmvQrYsH7_4MrvjyAe4aqAAlDg0X_I</string>
     <string name="search_here">Search here</string>
     <string name="thumbs_up">Thumbs up</string>
     <string name="post">POST!</string>

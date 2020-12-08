@@ -5,8 +5,16 @@ import javax.persistence.*
 
 @Entity
 class Article (
-        @Id var id: String,
-        var content: String,
-        var userId: Long,
-        var date: Date
+        @Id @GeneratedValue var id: Long,
+        var articleId: String,
+        var description: String,
+        var userId: String,
+        var userName: String,
+        var date: Date,
+        var category: Int,
+        var brand: String,
+        var name: String,
+        var price: Int,
+        @ElementCollection
+        val images: List<String>
 )

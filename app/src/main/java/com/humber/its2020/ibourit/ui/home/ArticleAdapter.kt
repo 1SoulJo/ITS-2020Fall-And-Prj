@@ -36,19 +36,23 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val article = articles[position]
+
         val h = holder as ViewHolder
         h.topLogo.setImageResource(R.drawable.ic_user_default)
-
-        val article = articles[position]
-        h.topUser.text = "test user $position"
-        h.mainUser.text = "test user $position"
-        h.mainContent.text ="test content $position"
+        h.topUser.text = article.userName
+        h.mainUser.text = article.userName
+        h.mainContent.text = article.description
 
         initSlider(h, h.itemView.context)
     }
 
     override fun getItemCount(): Int {
-        return articles.size
+        if (this::articles.isInitialized) {
+            return articles.size
+        } else {
+            return 0
+        }
     }
 
     fun setArticles(a: List<Article>) {

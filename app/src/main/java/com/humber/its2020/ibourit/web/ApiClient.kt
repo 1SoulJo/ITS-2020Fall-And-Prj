@@ -39,12 +39,13 @@ class ApiClient {
         articleApi().getArticles().enqueue(cb)
     }
 
-//    fun uploadImage(userId: Long, category: Int, articleId: String, file: MultipartBody.Part,
-    fun uploadImage(file: MultipartBody.Part,
-                cb: Callback<Void>) {
-//        imageApi().upload(userId, category, articleId, file).enqueue(cb)
-        imageApi().upload(file).enqueue(cb)
+    fun uploadArticle(article: Article, cb: Callback<Article>) {
+        articleApi().uploadArticle(article).enqueue(cb)
+    }
 
+    fun uploadImage(userId: String, category: Int, articleId: String, file: MultipartBody.Part,
+                cb: Callback<Void>) {
+        imageApi().upload(userId, category, articleId, file).enqueue(cb)
     }
 
     fun getUsers(cb: Callback<List<User>>) {

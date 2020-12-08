@@ -13,24 +13,39 @@
             android:id="@+id/image_area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="240dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.glide.slider.library.SliderLayout
                 android:id="@+id/slider"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="240dp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/add_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:src="@drawable/ic_new_image"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/add_image_sm"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_new_article"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:tint="#cfff" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
@@ -123,14 +138,22 @@
                     android:labelFor="@id/item_price"
                     android:layout_marginStart="16dp"
                     android:text="Price"/>
-                <EditText
-                    android:id="@+id/item_price"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:inputType="number"
-                    android:text="$ " />
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$ "/>
+                    <EditText
+                        android:id="@+id/item_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"/>
+                </LinearLayout>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -144,6 +167,7 @@
                 style="@style/NewPostTitle" />
 
             <EditText
+                android:id="@+id/item_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"

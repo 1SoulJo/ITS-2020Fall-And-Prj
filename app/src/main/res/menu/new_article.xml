@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_post"
-        android:icon="@drawable/ic_post"
+        android:icon="@drawable/ic_post2"
         android:title="POST"
         app:showAsAction="always" />
 </menu>
