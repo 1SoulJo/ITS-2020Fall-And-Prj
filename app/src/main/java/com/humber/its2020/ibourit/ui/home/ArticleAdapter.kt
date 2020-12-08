@@ -2,6 +2,7 @@ package com.humber.its2020.ibourit.ui.home
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.glide.slider.library.animations.DescriptionAnimation
 import com.glide.slider.library.slidertypes.DefaultSliderView
 import com.glide.slider.library.slidertypes.TextSliderView
 import com.humber.its2020.ibourit.R
+import com.humber.its2020.ibourit.constants.Urls.Companion.IMAGE_BASE
 import com.humber.its2020.ibourit.entity.Article
 import kotlinx.android.synthetic.main.list_item_article2.view.*
 
@@ -44,7 +46,7 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         h.mainUser.text = article.userName
         h.mainContent.text = article.description
 
-        initSlider(h, h.itemView.context)
+        initSlider(article, h, h.itemView.context)
     }
 
     override fun getItemCount(): Int {
@@ -60,12 +62,12 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    private fun initSlider(h: ViewHolder, ctx: Context) {
+    private fun initSlider(a: Article, h: ViewHolder, ctx: Context) {
         val listUrl: ArrayList<String> = ArrayList()
 
-        listUrl.add("https://images.freeimages.com/images/small-previews/7e9/purple-flower-1395092.jpg")
-        listUrl.add("https://images.freeimages.com/images/small-previews/4cb/paw-1394447.jpg")
-        listUrl.add("https://images.freeimages.com/images/small-previews/56e/hibiscus-1393855.jpg")
+        for (image in a.images!!) {
+            listUrl.add(IMAGE_BASE.format(image))
+        }
 
         val requestOptions = RequestOptions()
         requestOptions.centerCrop()

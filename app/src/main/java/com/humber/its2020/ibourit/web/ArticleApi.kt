@@ -11,5 +11,5 @@ interface ArticleApi {
     fun getArticles(): Call<List<Article>>
 
     @POST("article")
-    fun uploadArticle(@Body article: Article): Call<Article>
+    fun uploadArticle(@Body article: Article): Call<Void>
 }

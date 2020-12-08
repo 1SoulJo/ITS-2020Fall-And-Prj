@@ -22,6 +22,7 @@ import com.esafirm.imagepicker.model.Image
 import com.glide.slider.library.SliderLayout
 import com.glide.slider.library.slidertypes.DefaultSliderView
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place.Field
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
@@ -59,6 +60,7 @@ class NewArticleFragment : Fragment() {
 
     lateinit var images : ArrayList<Image>
     private lateinit var placesClient : PlacesClient
+    private lateinit var latLng: LatLng
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -151,7 +153,7 @@ class NewArticleFragment : Fragment() {
         if (requestCode == REQUEST_CODE_PLACE) {
             if (resultCode == Activity.RESULT_OK) {
                 val place = Autocomplete.getPlaceFromIntent(data!!)
-
+                latLng = place.latLng!!
                 val lat = place.latLng?.latitude
                 val lng = place.latLng?.longitude
                 Log.d("NewArticle", "${place.address} $lat , $lng")
@@ -178,41 +180,44 @@ class NewArticleFragment : Fragment() {
             val categoryInt = Category.byName(item_category.selectedItem.toString()).ordinal
             val article = Article(
                 generateArticleId(userId), userId, Credential.name(),
-                item_description.text.toString(), 0, null, date,
+                item_description.text.toString(), 0, ArrayList<String>(), date,
                 categoryInt,
                 act_brand.text.toString(),
                 item_name.text.toString(),
-                Integer.parseInt(item_price.text.toString()), null)
+                Integer.parseInt(item_price.text.toString()), ArrayList<String>(),
+                lat = latLng.latitude, lng = latLng.longitude)
 
-            ApiClient().uploadArticle(article, object : Callback<Article> {
-                override fun onResponse(call: Call<Article>, response: Response<Article>) {
+            // upload article
+            ApiClient().uploadArticle(article, object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     Log.d("NewArticle", "upload success")
+                    // upload images
+                    for ((order, image) in images.withIndex()) {
+                        val file = File(getRealPathFromURI(image.uri)!!)
+                        val filePart = MultipartBody.Part.createFormData(
+                            "file",
+                            file.name,
+                            RequestBody.create(MediaType.parse("image/*"), file)
+                        )
+
+                        Log.d("NewArticle", article.articleId)
+                        ApiClient().uploadImage(userId, categoryInt, article.articleId, filePart, order,
+                            object : Callback<Void> {
+                                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                    Log.d("NewArticle", "Image upload success")
+                                }
+
+                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                    Log.d("NewArticle", t.message!!)
+                                }
+                            })
+                    }
                 }
 
-                override fun onFailure(call: Call<Article>, t: Throwable) {
-                    Log.d("NewArticle", "upload fail")
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Log.d("NewArticle", "upload fail ${t.message}")
                 }
             })
-
-            for (image in images) {
-                val file = File(getRealPathFromURI(image.uri)!!)
-                val filePart = MultipartBody.Part.createFormData(
-                    "file",
-                    file.name,
-                    RequestBody.create(MediaType.parse("image/*"), file)
-                )
-
-                ApiClient().uploadImage(userId, categoryInt, article.articleId,
-                    filePart, object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            Log.d("NewArticle", response.message())
-                        }
-
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            Log.d("NewArticle", t.message!!)
-                        }
-                    })
-            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -256,7 +261,7 @@ class NewArticleFragment : Fragment() {
     }
 
     private fun updateCurrentLocation() {
-        val placeFields: List<Field> = listOf(Field.NAME, Field.ADDRESS)
+        val placeFields: List<Field> = listOf(Field.NAME, Field.ADDRESS, Field.LAT_LNG)
         val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
 
         if (ContextCompat.checkSelfPermission(
@@ -268,6 +273,7 @@ class NewArticleFragment : Fragment() {
             placeResponse.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val placeLikelihood = task.result?.placeLikelihoods!![0]
+                    latLng = placeLikelihood.place.latLng!!
                     val addresses = placeLikelihood.place.address!!.split(",").reversed()
                     val city = addresses[2]
                     val country = addresses[0]

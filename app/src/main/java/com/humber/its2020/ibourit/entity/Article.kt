@@ -13,5 +13,7 @@ data class Article(
     val brand: String,
     val name: String,
     val price: Int,
-    val images: List<String>?
+    val images: List<String>?,
+    val lat: Double,
+    val lng: Double
 )

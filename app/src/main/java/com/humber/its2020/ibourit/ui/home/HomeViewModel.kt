@@ -8,8 +8,6 @@ import com.humber.its2020.ibourit.web.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.DateFormat
-import java.util.*
 
 class HomeViewModel : ViewModel() {
     private val articles = MutableLiveData<List<Article>>()
@@ -27,7 +25,7 @@ class HomeViewModel : ViewModel() {
     private fun loadArticles() {
         ApiClient().getArticles(object: Callback<List<Article>> {
             override fun onResponse(call: Call<List<Article>>, response: Response<List<Article>>) {
-                articles.value = response.body()!!.sortedByDescending { it.date }
+                articles.value = response.body()!!
             }
 
             override fun onFailure(call: Call<List<Article>>, t: Throwable) {

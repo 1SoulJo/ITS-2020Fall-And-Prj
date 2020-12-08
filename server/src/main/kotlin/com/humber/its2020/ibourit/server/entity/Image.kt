@@ -8,5 +8,6 @@ class Image (
         var userId: String,
         var category: Int,
         var articleId: String,
-        val path: String
+        var path: String,
+        var imageOrder: Int
 )

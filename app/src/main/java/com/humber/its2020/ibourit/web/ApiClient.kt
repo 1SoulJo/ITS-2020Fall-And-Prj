@@ -2,6 +2,7 @@ package com.humber.its2020.ibourit.web
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.humber.its2020.ibourit.constants.Urls.Companion.BASE_URL
 import com.humber.its2020.ibourit.entity.Article
 import com.humber.its2020.ibourit.entity.User
 import okhttp3.MultipartBody
@@ -10,10 +11,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiClient {
-    companion object {
-        private const val BASE_URL = "http://10.0.2.2:8080"
-    }
-
     private val gson: Gson = GsonBuilder()
         .setLenient()
         .create()
@@ -39,13 +36,13 @@ class ApiClient {
         articleApi().getArticles().enqueue(cb)
     }
 
-    fun uploadArticle(article: Article, cb: Callback<Article>) {
+    fun uploadArticle(article: Article, cb: Callback<Void>) {
         articleApi().uploadArticle(article).enqueue(cb)
     }
 
     fun uploadImage(userId: String, category: Int, articleId: String, file: MultipartBody.Part,
-                cb: Callback<Void>) {
-        imageApi().upload(userId, category, articleId, file).enqueue(cb)
+                    order: Int, cb: Callback<Void>) {
+        imageApi().upload(userId, category, articleId, file, order).enqueue(cb)
     }
 
     fun getUsers(cb: Callback<List<User>>) {

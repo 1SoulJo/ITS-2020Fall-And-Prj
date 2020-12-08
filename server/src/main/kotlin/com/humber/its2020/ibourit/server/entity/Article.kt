@@ -16,5 +16,9 @@ class Article (
         var name: String,
         var price: Int,
         @ElementCollection
-        val images: List<String>
+        @CollectionTable(name = "article_image", joinColumns = [JoinColumn(name = "articleId")])
+        @Column(name = "image")
+        var images: MutableList<String>,
+        var lat: Double,
+        var lng: Double
 )
