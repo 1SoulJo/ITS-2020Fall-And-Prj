@@ -1,5 +1,6 @@
 package com.humber.its2020.ibourit.ui.inventory
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +12,12 @@ import com.humber.its2020.ibourit.entity.Inventory
 import kotlinx.android.synthetic.main.list_item_inventory.view.*
 
 class InventoryAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private lateinit var inventories: List<Inventory>
+
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val name: TextView = view.inventory_name
         val image: ImageView = view.inventory_image
     }
-
-    private lateinit var inventories: List<Inventory>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(
@@ -29,13 +30,17 @@ class InventoryAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val inventory = inventories[position]
         h.name.text = inventory.name
         h.image.setImageResource(inventory.imgId)
+        h.itemView.setOnClickListener {
+            val i = Intent(h.itemView.context, InventoryDetailActivity::class.java)
+            h.itemView.context.startActivity(i)
+        }
     }
 
     override fun getItemCount(): Int {
         return inventories.size
     }
 
-    fun setArticles(i: List<Inventory>) {
+    fun setInventories(i: List<Inventory>) {
         inventories = i
         notifyDataSetChanged()
     }

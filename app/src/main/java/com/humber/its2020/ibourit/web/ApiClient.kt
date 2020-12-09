@@ -10,7 +10,7 @@ import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiClient {
+object ApiClient {
     private val gson: Gson = GsonBuilder()
         .setLenient()
         .create()

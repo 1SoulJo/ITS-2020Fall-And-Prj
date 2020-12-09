@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.entity.Inventory
 import kotlinx.android.synthetic.main.fragment_inventory.*
@@ -35,7 +37,7 @@ class InventoryFragment : Fragment() {
         rv_inventory.layoutManager = LinearLayoutManager(activity)
         rv_inventory.adapter = viewModel.adapter
         val observer = Observer<List<Inventory>> { data ->
-            viewModel.adapter.setArticles(data)
+            viewModel.adapter.setInventories(data)
         }
         viewModel.getInventories().observe(activity as LifecycleOwner, observer)
     }

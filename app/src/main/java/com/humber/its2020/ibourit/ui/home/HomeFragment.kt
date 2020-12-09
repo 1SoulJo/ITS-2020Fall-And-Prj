@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.entity.Article
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.list_item_article.*
+
 
 class HomeFragment : Fragment() {
 

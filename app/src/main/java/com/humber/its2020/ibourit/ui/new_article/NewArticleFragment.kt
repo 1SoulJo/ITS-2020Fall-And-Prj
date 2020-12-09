@@ -188,7 +188,7 @@ class NewArticleFragment : Fragment() {
                 lat = latLng.latitude, lng = latLng.longitude)
 
             // upload article
-            ApiClient().uploadArticle(article, object : Callback<Void> {
+            ApiClient.uploadArticle(article, object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     Log.d("NewArticle", "upload success")
                     // upload images
@@ -201,10 +201,11 @@ class NewArticleFragment : Fragment() {
                         )
 
                         Log.d("NewArticle", article.articleId)
-                        ApiClient().uploadImage(userId, categoryInt, article.articleId, filePart, order,
+                        ApiClient.uploadImage(userId, categoryInt, article.articleId, filePart, order,
                             object : Callback<Void> {
                                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                                     Log.d("NewArticle", "Image upload success")
+                                    activity!!.supportFragmentManager.popBackStack()
                                 }
 
                                 override fun onFailure(call: Call<Void>, t: Throwable) {

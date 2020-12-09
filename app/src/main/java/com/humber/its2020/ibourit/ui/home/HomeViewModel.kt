@@ -1,5 +1,6 @@
 package com.humber.its2020.ibourit.ui.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,13 +24,13 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun loadArticles() {
-        ApiClient().getArticles(object: Callback<List<Article>> {
+        ApiClient.getArticles(object: Callback<List<Article>> {
             override fun onResponse(call: Call<List<Article>>, response: Response<List<Article>>) {
                 articles.value = response.body()!!
             }
 
             override fun onFailure(call: Call<List<Article>>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.d("HomeViewModel", t.message!!)
             }
         })
     }
