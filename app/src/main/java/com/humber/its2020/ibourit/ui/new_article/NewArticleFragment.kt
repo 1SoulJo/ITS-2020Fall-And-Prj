@@ -2,6 +2,7 @@ package com.humber.its2020.ibourit.ui.new_article
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -10,10 +11,12 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.loader.content.CursorLoader
 import com.bumptech.glide.request.RequestOptions
@@ -32,11 +35,12 @@ import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.constants.Category
-import com.humber.its2020.ibourit.constants.MapConstants.Companion.REQUEST_CODE_PLACE
+import com.humber.its2020.ibourit.constants.MapConstants.REQUEST_CODE_PLACE
 import com.humber.its2020.ibourit.credential.Credential
 import com.humber.its2020.ibourit.entity.Article
 import com.humber.its2020.ibourit.util.AddressUtil
 import com.humber.its2020.ibourit.web.ApiClient
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_article.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -174,18 +178,30 @@ class NewArticleFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // post article to server
         if (item.itemId == R.id.menu_post) {
+            if (requireActivity().currentFocus != null) {
+                val imm = getSystemService(requireContext(), InputMethodManager::class.java)
+                imm!!.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+            }
+
+            if (!dataValidated()) {
+                return true
+            }
+
             // create new article instance
             val userId = Credential.id()
             val pattern = "yyyy-MM-dd'T'HH:mm:ss"
             val simpleDateFormat = SimpleDateFormat(pattern, Locale.CANADA)
             val date: String = simpleDateFormat.format(Date())
             val categoryInt = Category.byName(item_category.selectedItem.toString()).ordinal
-            val address = AddressUtil.coordinateToAddress(requireContext(),
-                latLng.latitude, latLng.longitude)
+            val address = AddressUtil.coordinateToAddress(
+                requireContext(),
+                latLng.latitude, latLng.longitude
+            )
 
             Log.d("newarticle", "${address.locality} ${address.adminArea} ${address.countryName}")
 
-            val article = Article(0,
+            val article = Article(
+                0,
                 generateArticleId(userId), userId, Credential.name(),
                 item_description.text.toString(), 0, ArrayList<String>(), date,
                 categoryInt,
@@ -193,7 +209,8 @@ class NewArticleFragment : Fragment() {
                 item_model.text.toString(),
                 Integer.parseInt(item_price.text.toString()), ArrayList<String>(),
                 lat = latLng.latitude, lng = latLng.longitude,
-                city = address.locality, state = address.adminArea, country = address.countryName)
+                city = address.locality, state = address.adminArea, country = address.countryName
+            )
 
             // upload article
             ApiClient.uploadArticle(article, object : Callback<Void> {
@@ -207,12 +224,21 @@ class NewArticleFragment : Fragment() {
                             RequestBody.create(MediaType.parse("image/*"), file)
                         )
 
-                        ApiClient.uploadImage(userId, categoryInt, article.articleId, filePart, order,
+                        ApiClient.uploadImage(userId,
+                            categoryInt,
+                            article.articleId,
+                            filePart,
+                            order,
                             object : Callback<Void> {
-                                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                override fun onResponse(
+                                    call: Call<Void>,
+                                    response: Response<Void>
+                                ) {
                                     Log.d("NewArticle", "Image upload success")
                                     if (activity != null) {
                                         activity!!.supportFragmentManager.popBackStack()
+                                        val view = requireActivity().currentFocus
+                                        view?.clearFocus()
                                     }
                                 }
 
@@ -230,6 +256,15 @@ class NewArticleFragment : Fragment() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun dataValidated(): Boolean {
+        if (act_brand.text.toString().isEmpty() || item_model.text.toString().isEmpty()
+            || item_price.text.toString().isEmpty() || !this::latLng.isInitialized) {
+            return false
+        }
+
+        return true
     }
 
     private fun generateArticleId(userId: String) : String {

@@ -9,18 +9,36 @@
         android:id="@+id/brand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:fontFamily="@font/tmon_tium"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@android:color/primary_text_light"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <View
+        android:layout_width="100dp"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent" />
 
     <TextView
         android:id="@+id/user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#888"
+        android:gravity="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>

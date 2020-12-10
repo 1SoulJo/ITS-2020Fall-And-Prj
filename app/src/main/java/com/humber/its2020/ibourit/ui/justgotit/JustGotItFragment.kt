@@ -25,7 +25,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.constants.MapConstants
-import com.humber.its2020.ibourit.constants.MapConstants.Companion.REQUEST_CODE_PLACE
+import com.humber.its2020.ibourit.constants.MapConstants.REQUEST_CODE_PLACE
 import com.humber.its2020.ibourit.entity.Article
 import com.humber.its2020.ibourit.util.AddressUtil
 import com.humber.its2020.ibourit.web.ApiClient
@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.map_info_popup.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -92,7 +93,6 @@ class JustGotItFragment: Fragment() {
     private fun setupMap() {
         map_view.getMapAsync { googleMap: GoogleMap ->
             map = googleMap
-            val viewModel : JustGotItViewModel by viewModels()
 
             try {
                 map.isMyLocationEnabled = true
@@ -124,7 +124,7 @@ class JustGotItFragment: Fragment() {
                                     val position = LatLng(a.lat, a.lng)
                                     googleMap.addMarker(
                                         MarkerOptions().position(position).title(
-                                            "${a.brand};${a.name};${a.userName}"))
+                                            "${a.brand};${a.name};${a.userName};${a.date}"))
                                 }
                             }
                         }
@@ -147,6 +147,7 @@ class JustGotItFragment: Fragment() {
                     v.brand.text = data[0]
                     v.name.text = data[1]
                     v.user.text = data[2]
+                    v.date.text = data[3].substring(0, 10)
 
                     return v
                 }

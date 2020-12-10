@@ -2,7 +2,7 @@ package com.humber.its2020.ibourit.web
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.humber.its2020.ibourit.constants.Urls.Companion.BASE_URL
+import com.humber.its2020.ibourit.constants.Urls.getBaseUrl
 import com.humber.its2020.ibourit.entity.Article
 import com.humber.its2020.ibourit.entity.User
 import okhttp3.MultipartBody
@@ -15,10 +15,7 @@ object ApiClient {
         .setLenient()
         .create()
 
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
+    private lateinit var retrofit: Retrofit
 
     private fun articleApi(): ArticleApi {
         return retrofit.create(ArticleApi::class.java)
@@ -30,6 +27,13 @@ object ApiClient {
 
     private fun userApi(): UserApi {
         return retrofit.create(UserApi::class.java)
+    }
+
+    fun init(url: String) {
+        retrofit = Retrofit.Builder()
+            .baseUrl(url)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
     }
 
     fun getArticles(cb: Callback<List<Article>>) {

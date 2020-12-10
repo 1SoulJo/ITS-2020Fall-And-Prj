@@ -6,12 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +20,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.humber.its2020.ibourit.MainActivity
 import com.humber.its2020.ibourit.R
+import com.humber.its2020.ibourit.constants.AppConstant.SP_API
+import com.humber.its2020.ibourit.constants.AppConstant.SP_KEY_API
+import com.humber.its2020.ibourit.credential.Credential
 import kotlinx.android.synthetic.main.fragment_account.*
 
 
@@ -38,32 +41,29 @@ class AccountFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_account, container, false)
+        return inflater.inflate(R.layout.fragment_account, container, false)
+    }
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        (activity as AppCompatActivity).supportActionBar?.title =
+            " " + resources.getString(R.string.account)
+        (activity as AppCompatActivity).supportActionBar?.setLogo(R.drawable.ic_bag_09)
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
-        // Build a GoogleSignInClient with the options specified by gso.
         googleSignInClient = GoogleSignIn.getClient(activity as MainActivity, gso)
-
-        // Initialize Firebase Auth
         auth = Firebase.auth
 
-        return root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        (activity as AppCompatActivity).supportActionBar?.title =
-            " " + resources.getString(R.string.account)
-
+        user_name.text = Credential.name()
         btn_sign_in.setOnClickListener(this)
         btn_sign_out.setOnClickListener(this)
+        btn_api_update.setOnClickListener(this)
+        btn_api_clear.setOnClickListener(this)
 
         updateAccountName()
     }
@@ -78,6 +78,21 @@ class AccountFragment : Fragment(), View.OnClickListener {
                     updateAccountName()
                     requireActivity().finish()
                 }
+            }
+            R.id.btn_api_update -> {
+                if (api_address.text.isNotEmpty()) {
+                    val editor = requireContext().getSharedPreferences(SP_API, 0).edit()
+                    editor.putString(SP_KEY_API, api_address.text.toString())
+                    editor.apply()
+
+                    Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT).show()
+                }
+            }
+            R.id.btn_api_clear -> {
+                val editor = requireContext().getSharedPreferences(SP_API, 0).edit()
+                editor.remove(SP_KEY_API).apply()
+
+                Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -17,7 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.glide.slider.library.SliderLayout
 import com.glide.slider.library.indicators.PagerIndicator
 import com.humber.its2020.ibourit.R
-import com.humber.its2020.ibourit.constants.Urls.Companion.IMAGE_BASE
+import com.humber.its2020.ibourit.constants.Urls.IMAGE_BASE
 import com.humber.its2020.ibourit.credential.Credential
 import com.humber.its2020.ibourit.entity.Article
 import com.humber.its2020.ibourit.util.GlideApp
