@@ -35,7 +35,6 @@ import com.humber.its2020.ibourit.constants.Category
 import com.humber.its2020.ibourit.constants.MapConstants.Companion.REQUEST_CODE_PLACE
 import com.humber.its2020.ibourit.credential.Credential
 import com.humber.its2020.ibourit.entity.Article
-import com.humber.its2020.ibourit.entity.ItemInfo
 import com.humber.its2020.ibourit.web.ApiClient
 import kotlinx.android.synthetic.main.fragment_new_article.*
 import okhttp3.MediaType
@@ -133,6 +132,7 @@ class NewArticleFragment : Fragment() {
             slider.removeAllSliders()
             images = ImagePicker.getImages(data) as ArrayList<Image>
             for (image in images) {
+                Log.d(this::class.simpleName, image.uri.toString())
                 val sliderView = DefaultSliderView(requireContext())
 
                 sliderView
@@ -178,12 +178,12 @@ class NewArticleFragment : Fragment() {
             val simpleDateFormat = SimpleDateFormat(pattern, Locale.CANADA)
             val date: String = simpleDateFormat.format(Date())
             val categoryInt = Category.byName(item_category.selectedItem.toString()).ordinal
-            val article = Article(
+            val article = Article(0,
                 generateArticleId(userId), userId, Credential.name(),
                 item_description.text.toString(), 0, ArrayList<String>(), date,
                 categoryInt,
                 act_brand.text.toString(),
-                item_name.text.toString(),
+                item_model.text.toString(),
                 Integer.parseInt(item_price.text.toString()), ArrayList<String>(),
                 lat = latLng.latitude, lng = latLng.longitude)
 
@@ -205,7 +205,9 @@ class NewArticleFragment : Fragment() {
                             object : Callback<Void> {
                                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                                     Log.d("NewArticle", "Image upload success")
-                                    activity!!.supportFragmentManager.popBackStack()
+                                    if (activity != null) {
+                                        activity!!.supportFragmentManager.popBackStack()
+                                    }
                                 }
 
                                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -230,7 +232,7 @@ class NewArticleFragment : Fragment() {
         return Credential.hashString("SHA-1", unique)
     }
 
-    private fun getRealPathFromURI(contentUri: Uri): String? {
+    private fun getRealPathFromURI(contentUri: Uri): String {
         val proj = arrayOf(MediaStore.Images.Media.DATA)
         val loader = CursorLoader(requireContext(), contentUri, proj, null, null, null)
         val cursor: Cursor = loader.loadInBackground()!!
@@ -273,15 +275,19 @@ class NewArticleFragment : Fragment() {
             val placeResponse = placesClient.findCurrentPlace(request)
             placeResponse.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val placeLikelihood = task.result?.placeLikelihoods!![0]
-                    latLng = placeLikelihood.place.latLng!!
-                    val addresses = placeLikelihood.place.address!!.split(",").reversed()
-                    val city = addresses[2]
-                    val country = addresses[0]
+                    try {
+                        val placeLikelihood = task.result?.placeLikelihoods!![0]
+                        latLng = placeLikelihood.place.latLng!!
+                        val addresses = placeLikelihood.place.address!!.split(",").reversed()
+                        val city = addresses[2]
+                        val country = addresses[0]
 
-                    if (text_location != null) {
-                        text_location.visibility = View.VISIBLE
-                        text_location.text = "$city, $country"
+                        if (text_location != null) {
+                            text_location.visibility = View.VISIBLE
+                            text_location.text = "$city, $country"
+                        }
+                    } catch (e: Exception) {
+                        return@addOnCompleteListener
                     }
                 } else {
                     val exception = task.exception

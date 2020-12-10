@@ -21,7 +21,7 @@ import com.humber.its2020.ibourit.ui.account.AccountFragment
 
 class SplashActivity : AppCompatActivity() {
     companion object {
-        const val SPLASH_TIME : Long = 500
+        const val SPLASH_TIME : Long = 1000
         const val RC_SIGN_IN = 10098
     }
 

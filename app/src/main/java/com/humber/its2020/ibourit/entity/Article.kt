@@ -2,6 +2,7 @@ package com.humber.its2020.ibourit.entity
 
 
 data class Article(
+    val id: Long,
     val articleId: String,
     val userId: String,
     val userName: String,

@@ -76,6 +76,7 @@ class AccountFragment : Fragment(), View.OnClickListener {
                 googleSignInClient.signOut().addOnCompleteListener {
                     Log.d(TAG, "Signed Out");
                     updateAccountName()
+                    requireActivity().finish()
                 }
             }
         }

@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.humber.its2020.ibourit.R
+import com.humber.its2020.ibourit.constants.Category
 import com.humber.its2020.ibourit.entity.Inventory
 import kotlinx.android.synthetic.main.list_item_inventory.view.*
 
@@ -32,6 +33,7 @@ class InventoryAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         h.image.setImageResource(inventory.imgId)
         h.itemView.setOnClickListener {
             val i = Intent(h.itemView.context, InventoryDetailActivity::class.java)
+            i.putExtra("category", inventory.name)
             h.itemView.context.startActivity(i)
         }
     }

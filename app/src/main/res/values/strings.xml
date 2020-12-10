@@ -13,4 +13,5 @@
     <string name="thumbs_up">Thumbs up</string>
     <string name="post">POST!</string>
     <string name="inventory_image">Inventory image</string>
+    <string name="empty_message">This inventory is empty\nGet somethin\' and fill it, dude!</string>
 </resources>

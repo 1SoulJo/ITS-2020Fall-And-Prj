@@ -24,7 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.inventory.InventoryDetailActivity"></activity>
+        <activity android:name=".ui.inventory.AddInventoryActivity" />
+        <activity android:name=".ui.inventory.InventoryDetailActivity" />
         <activity
             android:name=".ui.SplashActivity"
             android:theme="@style/SplashTheme">

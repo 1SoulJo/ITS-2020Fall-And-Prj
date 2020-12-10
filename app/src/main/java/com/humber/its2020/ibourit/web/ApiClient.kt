@@ -48,4 +48,8 @@ object ApiClient {
     fun getUsers(cb: Callback<List<User>>) {
         userApi().getUsers().enqueue(cb)
     }
+
+    fun deleteArticle(id: Long, cb: Callback<Void>) {
+        articleApi().deleteArticle(id).enqueue(cb)
+    }
 }

@@ -9,17 +9,23 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.glide.slider.library.SliderLayout
 import com.glide.slider.library.indicators.PagerIndicator
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.constants.Urls.Companion.IMAGE_BASE
+import com.humber.its2020.ibourit.credential.Credential
 import com.humber.its2020.ibourit.entity.Article
+import com.humber.its2020.ibourit.util.GlideApp
+import com.humber.its2020.ibourit.web.ApiClient
 import kotlinx.android.synthetic.main.list_item_article.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -31,6 +37,7 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val mainUser: TextView = view.main_user
         val mainContent: TextView = view.main_content
         val info: LinearLayout = view.info_layout
+        val more: ImageView = view.top_more
     }
 
     private lateinit var articles: List<Article>
@@ -49,6 +56,7 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         h.topUser.text = article.userName
         h.mainUser.text = article.userName
         h.mainContent.text = article.description
+        h.info.visibility = View.GONE
 
         initImages(article, h, h.itemView.context)
 
@@ -63,6 +71,28 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 TransitionManager.beginDelayedTransition(h.itemView as ViewGroup, Fade(Fade.IN))
                 h.info.visibility = View.VISIBLE
             }
+        }
+
+        if (Credential.id() == article.userId) {
+            h.more.visibility = View.VISIBLE
+            h.more.setOnClickListener {
+                val popup = PopupMenu(h.itemView.context, h.more)
+                popup.menuInflater.inflate(R.menu.article_menu, popup.menu)
+                popup.setOnMenuItemClickListener {
+                    if (it.itemId == R.id.article_menu_delete) {
+                        ApiClient.deleteArticle(article.id, object: Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                notifyItemRemoved(position)
+                            }
+                            override fun onFailure(call: Call<Void>, t: Throwable) {}
+                        })
+                    }
+                    true
+                }
+                popup.show()
+            }
+        } else {
+            h.more.visibility = View.GONE
         }
     }
 
@@ -84,7 +114,7 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             h.fixedImage.visibility = View.VISIBLE
             h.slider.visibility = View.GONE
 
-            Glide.with(ctx)
+            GlideApp.with(ctx)
                 .load(IMAGE_BASE.format(a.images[0]))
                 .into(h.fixedImage)
 
@@ -100,7 +130,7 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             val requestOptions = RequestOptions()
-            requestOptions.fitCenter()
+            requestOptions.centerCrop()
 
             for (i in 0 until listUrl.size) {
                 val sliderView = CustomSliderView(ctx)
@@ -111,10 +141,18 @@ class ArticleAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     .setProgressBarVisible(true)
                     .setOnSliderClickListener {
                         if (h.info.visibility == View.VISIBLE) {
-                            TransitionManager.beginDelayedTransition(h.itemView as ViewGroup, Fade(Fade.OUT))
+                            TransitionManager.beginDelayedTransition(
+                                h.itemView as ViewGroup, Fade(
+                                    Fade.OUT
+                                )
+                            )
                             h.info.visibility = View.GONE
                         } else {
-                            TransitionManager.beginDelayedTransition(h.itemView as ViewGroup, Fade(Fade.IN))
+                            TransitionManager.beginDelayedTransition(
+                                h.itemView as ViewGroup, Fade(
+                                    Fade.IN
+                                )
+                            )
                             h.info.visibility = View.VISIBLE
                         }
                     }

@@ -2,9 +2,7 @@ package com.humber.its2020.ibourit.web
 
 import com.humber.its2020.ibourit.entity.Article
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ArticleApi {
     @GET("article")
@@ -12,4 +10,7 @@ interface ArticleApi {
 
     @POST("article")
     fun uploadArticle(@Body article: Article): Call<Void>
+
+    @DELETE("article/{id}")
+    fun deleteArticle(@Path("id") id: Long): Call<Void>
 }

@@ -1,6 +1,7 @@
 package com.humber.its2020.ibourit.ui.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,9 @@ class HomeViewModel : ViewModel() {
     private fun loadArticles() {
         ApiClient.getArticles(object: Callback<List<Article>> {
             override fun onResponse(call: Call<List<Article>>, response: Response<List<Article>>) {
+                if (response.body().isNullOrEmpty()) {
+                    return
+                }
                 articles.value = response.body()!!
             }
 
