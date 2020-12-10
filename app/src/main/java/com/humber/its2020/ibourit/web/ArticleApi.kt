@@ -8,6 +8,13 @@ interface ArticleApi {
     @GET("article")
     fun getArticles(): Call<List<Article>>
 
+    @GET("article/address")
+    fun getArticlesByAddress(
+        @Query("city") city: String,
+        @Query("state") state: String,
+        @Query("country") country: String
+    ): Call<List<Article>>
+
     @POST("article")
     fun uploadArticle(@Body article: Article): Call<Void>
 

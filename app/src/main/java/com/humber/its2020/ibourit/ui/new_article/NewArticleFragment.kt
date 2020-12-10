@@ -35,6 +35,7 @@ import com.humber.its2020.ibourit.constants.Category
 import com.humber.its2020.ibourit.constants.MapConstants.Companion.REQUEST_CODE_PLACE
 import com.humber.its2020.ibourit.credential.Credential
 import com.humber.its2020.ibourit.entity.Article
+import com.humber.its2020.ibourit.util.AddressUtil
 import com.humber.its2020.ibourit.web.ApiClient
 import kotlinx.android.synthetic.main.fragment_new_article.*
 import okhttp3.MediaType
@@ -173,11 +174,17 @@ class NewArticleFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // post article to server
         if (item.itemId == R.id.menu_post) {
+            // create new article instance
             val userId = Credential.id()
             val pattern = "yyyy-MM-dd'T'HH:mm:ss"
             val simpleDateFormat = SimpleDateFormat(pattern, Locale.CANADA)
             val date: String = simpleDateFormat.format(Date())
             val categoryInt = Category.byName(item_category.selectedItem.toString()).ordinal
+            val address = AddressUtil.coordinateToAddress(requireContext(),
+                latLng.latitude, latLng.longitude)
+
+            Log.d("newarticle", "${address.locality} ${address.adminArea} ${address.countryName}")
+
             val article = Article(0,
                 generateArticleId(userId), userId, Credential.name(),
                 item_description.text.toString(), 0, ArrayList<String>(), date,
@@ -185,7 +192,8 @@ class NewArticleFragment : Fragment() {
                 act_brand.text.toString(),
                 item_model.text.toString(),
                 Integer.parseInt(item_price.text.toString()), ArrayList<String>(),
-                lat = latLng.latitude, lng = latLng.longitude)
+                lat = latLng.latitude, lng = latLng.longitude,
+                city = address.locality, state = address.adminArea, country = address.countryName)
 
             // upload article
             ApiClient.uploadArticle(article, object : Callback<Void> {
@@ -195,12 +203,10 @@ class NewArticleFragment : Fragment() {
                     for ((order, image) in images.withIndex()) {
                         val file = File(getRealPathFromURI(image.uri)!!)
                         val filePart = MultipartBody.Part.createFormData(
-                            "file",
-                            file.name,
+                            "file", file.name,
                             RequestBody.create(MediaType.parse("image/*"), file)
                         )
 
-                        Log.d("NewArticle", article.articleId)
                         ApiClient.uploadImage(userId, categoryInt, article.articleId, filePart, order,
                             object : Callback<Void> {
                                 override fun onResponse(call: Call<Void>, response: Response<Void>) {

@@ -1,14 +1,13 @@
 package com.humber.its2020.ibourit.ui.inventory
 
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide.with
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.database.AppDatabase
 import com.humber.its2020.ibourit.entity.InventoryItem
@@ -17,6 +16,7 @@ import kotlinx.android.synthetic.main.list_item_inventory_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,6 +31,7 @@ class InventoryItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val model: TextView = view.item_detail_model
         val price: TextView = view.item_detail_price
         val age: TextView = view.item_detail_age
+        val more: ImageView = view.more
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -43,13 +44,13 @@ class InventoryItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val h = holder as ViewHolder
         val item = items[position]
-        val dao = AppDatabase.get(holder.itemView.context).itemImageDao()
+        val imageDao = AppDatabase.get(holder.itemView.context).itemImageDao()
 
         h.image2.visibility = View.GONE
         h.image3.visibility = View.GONE
 
         GlobalScope.launch {
-            val images = dao.getByItemId(item.id)
+            val images = imageDao.getByItemId(item.id)
             for ((index, image) in images.withIndex()) {
                 launch(Dispatchers.Main.immediate) {
                     val target: ImageView = when(index) {
@@ -77,9 +78,23 @@ class InventoryItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         h.price.text = "$ ${item.price}"
         val date = Date(item.date)
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
-        Log.d("Inventory", sdf.parse("2019-12-24").time.toString())
-        Log.d("Inventory", sdf.format(Date(item.date)).toString())
         h.age.text = sdf.format(date)
+
+        h.more.setOnClickListener {
+            val popup = PopupMenu(h.itemView.context, h.more)
+            popup.menuInflater.inflate(R.menu.article_menu, popup.menu)
+            popup.setOnMenuItemClickListener {
+                if (it.itemId == R.id.article_menu_delete) {
+                    val itemDao = AppDatabase.get(holder.itemView.context).itemDao()
+                    GlobalScope.launch {
+                        itemDao.delete(items[position])
+                    }
+                    notifyItemRemoved(position)
+                }
+                true
+            }
+            popup.show()
+        }
     }
 
     override fun getItemCount(): Int {

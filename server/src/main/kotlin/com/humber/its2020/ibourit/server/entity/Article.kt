@@ -20,5 +20,8 @@ class Article (
         @Column(name = "image")
         var images: MutableList<String>,
         var lat: Double,
-        var lng: Double
+        var lng: Double,
+        val city: String,
+        val state: String,
+        val country: String
 )

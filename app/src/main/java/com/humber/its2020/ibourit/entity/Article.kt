@@ -16,5 +16,8 @@ data class Article(
     val price: Int,
     val images: List<String>?,
     val lat: Double,
-    val lng: Double
+    val lng: Double,
+    val city: String,
+    val state: String,
+    val country: String
 )

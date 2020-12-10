@@ -36,8 +36,17 @@ object ApiClient {
         articleApi().getArticles().enqueue(cb)
     }
 
+    fun getArticlesByAddress(city: String, state: String, country: String,
+                             cb: Callback<List<Article>>) {
+        articleApi().getArticlesByAddress(city, state, country).enqueue(cb)
+    }
+
     fun uploadArticle(article: Article, cb: Callback<Void>) {
         articleApi().uploadArticle(article).enqueue(cb)
+    }
+
+    fun deleteArticle(id: Long, cb: Callback<Void>) {
+        articleApi().deleteArticle(id).enqueue(cb)
     }
 
     fun uploadImage(userId: String, category: Int, articleId: String, file: MultipartBody.Part,
@@ -47,9 +56,5 @@ object ApiClient {
 
     fun getUsers(cb: Callback<List<User>>) {
         userApi().getUsers().enqueue(cb)
-    }
-
-    fun deleteArticle(id: Long, cb: Callback<Void>) {
-        articleApi().deleteArticle(id).enqueue(cb)
     }
 }

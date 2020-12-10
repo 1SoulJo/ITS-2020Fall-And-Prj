@@ -17,6 +17,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -25,10 +26,16 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.humber.its2020.ibourit.R
 import com.humber.its2020.ibourit.constants.MapConstants
 import com.humber.its2020.ibourit.constants.MapConstants.Companion.REQUEST_CODE_PLACE
-import com.humber.its2020.ibourit.ui.new_article.NewArticleFragment
+import com.humber.its2020.ibourit.entity.Article
+import com.humber.its2020.ibourit.util.AddressUtil
+import com.humber.its2020.ibourit.web.ApiClient
 import kotlinx.android.synthetic.main.fragment_justgotit.*
-import kotlinx.android.synthetic.main.fragment_new_article.*
+import kotlinx.android.synthetic.main.map_info_popup.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
+
 
 class JustGotItFragment: Fragment() {
     private lateinit var map: GoogleMap
@@ -49,7 +56,10 @@ class JustGotItFragment: Fragment() {
 
         map_view.onCreate(savedInstanceState)
 
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
             != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         } else {
@@ -94,29 +104,70 @@ class JustGotItFragment: Fragment() {
             map.uiSettings.isMyLocationButtonEnabled = true
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapConstants.INITIAL_LOCATION, 14.0f))
 
-            // Add marker event handler
-//            map.setOnInfoWindowClickListener { marker: Marker? ->
-//                TODO()
-//            }
-//            map.setOnCameraIdleListener {
-//                TODO()
-//            }
-//            map.setOnMarkerClickListener { marker: Marker? ->
-//                TODO()
-//            }
-//            map.setOnMapClickListener { latLng: LatLng? ->
-//                TODO()
-//            }
+            // display markers
+            map.setOnCameraIdleListener {
+                val address = AddressUtil.coordinateToAddress(
+                    requireContext(),
+                    map.cameraPosition.target.latitude,
+                    map.cameraPosition.target.longitude
+                )
+                ApiClient.getArticlesByAddress(
+                    address.locality, address.adminArea, address.countryName,
+                    object : Callback<List<Article>> {
+                        override fun onResponse(
+                            call: Call<List<Article>>,
+                            response: Response<List<Article>>) {
+                            if (!response.body().isNullOrEmpty()) {
+                                val list = response.body()!!
+                                for (a in list) {
+                                    Log.d("map", a.brand)
+                                    val position = LatLng(a.lat, a.lng)
+                                    googleMap.addMarker(
+                                        MarkerOptions().position(position).title(
+                                            "${a.brand};${a.name};${a.userName}"))
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<List<Article>>, t: Throwable) {
+                        }
+                    })
+            }
+
+            // marker info view
+            map.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter {
+                override fun getInfoWindow(p0: Marker?): View? {
+                    return null
+                }
+
+                override fun getInfoContents(p0: Marker?): View {
+                    val v =
+                        requireActivity().layoutInflater.inflate(R.layout.map_info_popup, null)
+                    val data = p0!!.title.split(";")
+                    v.brand.text = data[0]
+                    v.name.text = data[1]
+                    v.user.text = data[2]
+
+                    return v
+                }
+            })
 
             map_view.onResume()
         }
 
         map_search.setOnClickListener {
             if (!Places.isInitialized()) {
-                Places.initialize(requireContext(), getString(R.string.google_maps_key), Locale.CANADA)
+                Places.initialize(requireContext(),
+                    getString(R.string.google_maps_key), Locale.CANADA)
             }
 
-            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
+            val fields = listOf(
+                Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.LAT_LNG,
+                Place.Field.ADDRESS
+            )
+
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                 .build(requireContext())
             startActivityForResult(intent, REQUEST_CODE_PLACE)

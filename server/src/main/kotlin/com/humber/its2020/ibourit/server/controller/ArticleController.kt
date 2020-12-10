@@ -17,6 +17,14 @@ class ArticleController (val repo: ArticleRepository) {
         return repo.findAllArticles().toList()
     }
 
+    @GetMapping("/article/address")
+    fun getByAddress(
+        @RequestParam city: String,
+        @RequestParam state: String,
+        @RequestParam country: String): List<Article> {
+        return repo.findByAddress(city, state, country).toList()
+    }
+
     @DeleteMapping("/article/{id}")
     fun deletePost(@PathVariable id: Long) {
         repo.deleteById(id)
